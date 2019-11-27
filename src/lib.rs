@@ -65,6 +65,7 @@
     feature(stdsimd, f16c_target_feature)
 )]
 #![doc(html_root_url = "https://docs.rs/half/1.4.0")]
+#![feature(const_if_match)]
 
 mod bfloat;
 mod binary16;

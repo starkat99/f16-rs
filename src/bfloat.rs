@@ -165,7 +165,7 @@ impl bf16 {
     /// assert!(!lower_than_min.is_normal());
     /// ```
     #[inline]
-    pub fn is_normal(self) -> bool {
+    pub const fn is_normal(self) -> bool {
         let exp = self.0 & 0x7F80u16;
         exp != 0x7F80u16 && exp != 0
     }
@@ -187,7 +187,7 @@ impl bf16 {
     /// assert_eq!(num.classify(), FpCategory::Normal);
     /// assert_eq!(inf.classify(), FpCategory::Infinite);
     /// ```
-    pub fn classify(self) -> FpCategory {
+    pub const fn classify(self) -> FpCategory {
         let exp = self.0 & 0x7F80u16;
         let man = self.0 & 0x007Fu16;
         match (exp, man) {
@@ -217,13 +217,13 @@ impl bf16 {
     ///
     /// assert!(bf16::NAN.signum().is_nan());
     /// ```
-    pub fn signum(self) -> bf16 {
+    pub const fn signum(self) -> bf16 {
         if self.is_nan() {
             self
         } else if self.0 & 0x8000u16 != 0 {
-            bf16::from_f32(-1.0)
+            bf16::NEG_ONE
         } else {
-            bf16::from_f32(1.0)
+            bf16::ONE
         }
     }
 
@@ -310,6 +310,8 @@ impl bf16 {
 
     /// [`bf16`](struct.bf16.html) 1
     pub const ONE: bf16 = bf16(0x3F80u16);
+    /// [`bf16`](struct.bf16.html) -1
+    pub const NEG_ONE: bf16 = bf16(0xBF80u16);
     /// [`bf16`](struct.bf16.html) 0
     pub const ZERO: bf16 = bf16(0x0000u16);
     /// [`bf16`](struct.bf16.html) -0
@@ -525,12 +527,14 @@ mod test {
     fn test_bf16_consts_from_f32() {
         let one = bf16::from_f32(1.0);
         let zero = bf16::from_f32(0.0);
+        let neg_one = bf16::from_f32(-1.0);
         let neg_zero = bf16::from_f32(-0.0);
         let inf = bf16::from_f32(core::f32::INFINITY);
         let neg_inf = bf16::from_f32(core::f32::NEG_INFINITY);
         let nan = bf16::from_f32(core::f32::NAN);
 
         assert_eq!(bf16::ONE, one);
+        assert_eq!(bf16::NEG_ONE, neg_one);
         assert_eq!(bf16::ZERO, zero);
         assert_eq!(bf16::NEG_ZERO, neg_zero);
         assert_eq!(bf16::INFINITY, inf);
@@ -577,12 +581,14 @@ mod test {
     fn test_bf16_consts_from_f64() {
         let one = bf16::from_f64(1.0);
         let zero = bf16::from_f64(0.0);
+        let neg_one = bf16::from_f64(-1.0);
         let neg_zero = bf16::from_f64(-0.0);
         let inf = bf16::from_f64(core::f64::INFINITY);
         let neg_inf = bf16::from_f64(core::f64::NEG_INFINITY);
         let nan = bf16::from_f64(core::f64::NAN);
 
         assert_eq!(bf16::ONE, one);
+        assert_eq!(bf16::NEG_ONE, neg_one);
         assert_eq!(bf16::ZERO, zero);
         assert_eq!(bf16::NEG_ZERO, neg_zero);
         assert_eq!(bf16::INFINITY, inf);
